@@ -4,13 +4,17 @@ from fastapi.responses import FileResponse
 
 app = FastAPI()
 
+class Numbers(BaseModel):
+    num1: int
+    num2: int
+
 @app.get("/")
 async def root():
     return FileResponse('templates/index.html')
 
 @app.post("/api/calculate")
-def plus_numbers(num1: int, num2: int):
-    return {"result": num1 + num2}
+async def plus_numbers(data: Numbers):
+    return {"result": data.num1 + data.num2}
 
 # from fastapi import FastAPI, Request
 # from fastapi.responses import HTMLResponse

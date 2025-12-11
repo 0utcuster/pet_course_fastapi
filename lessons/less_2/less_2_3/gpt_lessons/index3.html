@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculate</title>
+</head>
+<body>
+<h1>Вычислить сумму двух чисел</h1>
+
+<label for="num1">a: </label>
+<input type="number" id="num1">
+<label for="num2">b: </label>
+<input type="number" id="num2">
+<button id="button">Результат</button>
+<p>Ответ: <span id="result">-</span></p>
+
+
+<script>
+const num1El = document.getElementById('num1');
+const num2El = document.getElementById('num2');
+const resultEl = document.getElementById('result');
+const btnEl = document.getElementById('button');
+
+async function recalc() {
+  const num1 = num1El.value;
+  const num2 = num2El.value;
+
+  if (num1 === '' || num2 === '') {
+  resultEl.textContent = '-';
+  return;
+  }
+
+  const response = await fetch('/api/calculate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      num1: Number(num1),
+      num2: Number(num2),
+    }),
+  });
+
+  const data = await response.json();
+  resultEl.textContent = data.result;
+}
+btnEl.addEventListener('click', recalc);
+</script>
+</body>
+</html>

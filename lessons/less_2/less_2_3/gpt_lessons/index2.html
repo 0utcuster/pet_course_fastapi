@@ -1,0 +1,28 @@
+<input id="a">
+<input id="b">
+<div id="sum">—</div>
+
+<script>
+    const aEl = document.getElementById('a');
+    const bEl = document.getElementById('b');
+    const sumEl = document.getElementById('sum');
+
+    function recalc() {
+        const a = aEl.value;
+        const b = bEl.value;
+
+        // если одно из полей пустое → показываем тире
+        if (a === '' || b === '') {
+            sumEl.textContent = '—';
+            return;
+        }
+
+        // складываем числа
+        const result = Number(a) + Number(b);
+
+        sumEl.textContent = result;
+    }
+
+    aEl.addEventListener('input', recalc);
+    bEl.addEventListener('input', recalc);
+</script>

@@ -1,0 +1,13 @@
+<input id="txt">
+<div id="out"></div>
+
+<script>
+    const textEL = document.getElementById('txt');
+    const outEL = document.getElementById('out');
+
+    textEL.addEventListener('input', () => { 
+        outEL.textContent = textEL.value;
+    });
+</script>
+
+<!-- здесь вызывается функция как в прмиере с калькулятором, но просто это делается сразу, а не заарнее -->
