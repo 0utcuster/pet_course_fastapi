@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Calculate</title>
+</head>
+<body>
+
+<h1>Живой калькулятор</h1>
+
+<label for="a">a:</label>
+<input type="number" id="a">
+
+<label for="b">b:</label>
+<input type="number" id="b">
+
+<p>Результат: <span id="result">—</span></p>
+
+<script>
+  const aEl = document.getElementById('a');
+  const bEl = document.getElementById('b');
+  const resultEl = document.getElementById('result');
+
+  async function recalc() {
+    const a = aEl.value;
+    const b = bEl.value;
+
+    // 1. Проверка: оба поля заполнены?
+    if (a === '' || b === '') {
+      resultEl.textContent = '—';
+      return;
+    }
+
+    // 2. Отправляем данные на сервер
+    const response = await fetch('/api/calculate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        num1: Number(a),
+        num2: Number(b),
+      }),
+    });
+
+    // 3. Получаем ответ
+    const data = await response.json();
+
+    // 4. Обновляем HTML
+    resultEl.textContent = data.result;
+  }
+
+  // 5. Реакция на ввод
+  aEl.addEventListener('input', recalc);
+  bEl.addEventListener('input', recalc);
+</script>
+
+</body>
+</html>
