@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue Calculator</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <h1>Vue калькулятор</h1>
+
+  <label>
+    a:
+    <input type="number" v-model="a">
+  </label>
+
+  <label>
+    b:
+    <input type="number" v-model="b">
+  </label>
+
+  <p>Результат: {{ result }}</p>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      a: '',
+      b: ''
+    };
+  },
+  computed: {
+    result() {
+      if (this.a === '' || this.b === '') {
+        return '—';
+      }
+      return Number(this.a) + Number(this.b);
+    }
+  }
+}).mount('#app');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue + FastAPI калькулятор</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body { font-family: system-ui; padding: 16px; max-width: 520px; }
+    input { width: 140px; margin-left: 6px; }
+    .row { display: flex; gap: 12px; align-items: center; margin: 8px 0; }
+    .error { color: crimson; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <h1>Живой калькулятор (Vue → FastAPI)</h1>
+
+  <div class="row">
+    <label>a: <input type="number" v-model="a" /></label>
+    <label>b: <input type="number" v-model="b" /></label>
+  </div>
+
+  <p>Результат: <strong>{{ result }}</strong></p>
+  <p v-if="loading">Считаю...</p>
+  <p v-if="error" class="error">{{ error }}</p>
+</div>
+
+<script>
+const { createApp, watch } = Vue;
+
+createApp({
+  data() {
+    return {
+      a: "",
+      b: "",
+      result: "—",
+      loading: false,
+      error: "",
+      timerId: null,
+    };
+  },
+
+  methods: {
+    async calculateOnServer() {
+      // 1) проверка на пустые поля
+      if (this.a === "" || this.b === "") {
+        this.result = "—";
+        this.error = "";
+        return;
+      }
+
+      this.loading = true;
+      this.error = "";
+
+      try {
+        const response = await fetch("/api/calculate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            num1: Number(this.a),
+            num2: Number(this.b),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.result = data.result;
+      } catch (e) {
+        this.result = "—";
+        this.error = "Ошибка запроса к серверу";
+        console.error(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    scheduleCalc() {
+      // debounce: не спамим сервер
+      clearTimeout(this.timerId);
+      this.timerId = setTimeout(() => {
+        this.calculateOnServer();
+      }, 300);
+    },
+  },
+
+  mounted() {
+    // watch следит за a и b и вызывает scheduleCalc при изменениях
+    watch(() => this.a, this.scheduleCalc);
+    watch(() => this.b, this.scheduleCalc);
+  },
+}).mount("#app");
+</script>
+
+</body>
+</html>
